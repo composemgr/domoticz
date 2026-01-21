@@ -1,0 +1,27 @@
+# nginx proxy address - http://172.17.0.1:8098
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "5m"
+    max-file: "1"
+
+services:
+  domoticz:
+    image: domoticz/domoticz:latest
+    container_name: domoticz-app
+    restart: unless-stopped
+    logging: *default-logging
+    networks:
+      - domoticz
+    ports:
+      - "8098:8080"
+    environment:
+      TZ: ${TZ:-America/New_York}
+    volumes:
+      - ./rootfs/config/domoticz:/config
+      - ./rootfs/data/domoticz:/data
+
+networks:
+  domoticz:
+    external: false
