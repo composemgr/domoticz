@@ -45,8 +45,8 @@ See `docker-compose.yaml` for complete list of configurable options.
 
 ## 📂 Volumes
 
-- `./rootfs/config/domoticz` - Data storage
-- `./rootfs/data/domoticz` - Data storage
+- `./volumes/config/domoticz` - Data storage
+- `./volumes/data/domoticz` - Data storage
 
 ## 🔍 Logging
 
