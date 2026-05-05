@@ -19,8 +19,8 @@ services:
     environment:
       TZ: ${TZ:-America/New_York}
     volumes:
-      - ./rootfs/config/domoticz:/config
-      - ./rootfs/data/domoticz:/data
+      - ./volumes/config/domoticz:/config
+      - ./volumes/data/domoticz:/data
 
 networks:
   domoticz:
