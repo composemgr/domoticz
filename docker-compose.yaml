@@ -16,17 +16,41 @@ services:
     logging: *default-logging
     networks:
       - domoticz
+      - proxy
+      - cloudflare
     ports:
       - "172.17.0.1:8098:8080"
     environment:
       TZ: ${TZ:-America/New_York}
       PUID: ${SERVICE_USER:-1000}
       PGID: ${SERVICE_GROUP:-1000}
+      CONTAINER_NAME: domoticz-app
+      HOSTNAME: ${BASE_HOST_NAME:-$HOSTNAME}
     volumes:
       - ./volumes/config/domoticz:/config
       - ./volumes/data/domoticz:/data
+    labels:
+      - 'traefik.enable=true'
+      - 'cloudflare.enable=true'
+      - 'traefik.docker.network=proxy'
+      - 'cloudflare.service=http://domoticz-app:8080'
+      - 'cloudflare.hostname=domoticz.${CLOUDFLARE_ZONE_NAME:-}'
+      - 'traefik.http.routers.domoticz-app.entrypoints=http'
+      - 'traefik.http.routers.domoticz-app-secure.tls=true'
+      - 'traefik.http.routers.domoticz-app.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.middlewares.domoticz-app-https-redirect.redirectscheme.scheme=https'
+      - 'traefik.http.routers.domoticz-app.middlewares=domoticz-app-https-redirect'
+      - 'traefik.http.routers.domoticz-app-secure.entrypoints=https'
+      - 'traefik.http.routers.domoticz-app-secure.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.routers.domoticz-app-secure.tls.certresolver=cloudflare'
+      - 'traefik.http.routers.domoticz-app-secure.service=domoticz-app'
+      - 'traefik.http.services.domoticz-app.loadbalancer.server.port=8080'
 
 networks:
   domoticz:
     name: domoticz
     external: false
+  proxy:
+    external: true
+  cloudflare:
+    external: true
