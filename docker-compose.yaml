@@ -22,13 +22,10 @@ services:
       - "172.17.0.1:8098:8080"
     environment:
       TZ: ${TZ:-America/New_York}
-      PUID: ${SERVICE_USER:-1000}
-      PGID: ${SERVICE_GROUP:-1000}
       CONTAINER_NAME: domoticz-app
       HOSTNAME: ${BASE_HOST_NAME:-$HOSTNAME}
     volumes:
-      - ./volumes/config/domoticz:/config
-      - ./volumes/data/domoticz:/data
+      - ./volumes/data/domoticz:/opt/domoticz/userdata
     labels:
       - 'traefik.enable=true'
       - 'cloudflare.enable=true'
